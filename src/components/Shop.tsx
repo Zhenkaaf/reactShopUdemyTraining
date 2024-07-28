@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { API_KEY, API_URL } from "./../config";
 import Preloader from "./Preloader";
 import GoodsList from "./GoodsList";
@@ -6,20 +6,16 @@ import Cart from "./Cart";
 import BasketList from "./BasketList";
 import { IGood } from "../types";
 import Alert from "./Alert";
+import { ShopContext } from "../context";
 
 const Shop = () => {
-  const [goods, setGoods] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [order, setOrder] = useState<IGood[]>([]);
-  const [isBasketShow, setBasketShow] = useState(false);
-  const [alertName, setAlertName] = useState("");
+  const context = useContext(ShopContext);
+  if (!context) {
+    throw new Error("ShopContext must be used within a ShopProvider");
+  }
+  const { setGoods, loading, order, alertName, isBasketShow } = context;
 
-  const closeAlert = () => {
-    setAlertName("");
-  };
-  const handleBasketShow = () => {
-    setBasketShow(!isBasketShow);
-  };
+  console.log("ShopRender");
   useEffect(function getGoods() {
     fetch(API_URL, {
       headers: {
@@ -29,12 +25,18 @@ const Shop = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        data.fish && setGoods(data.fish);
-        setLoading(false);
+        setGoods(data.fish);
       });
+    //eslint-disable-next-line
   }, []);
+  /*   const closeAlert = () => {
+    setAlertName("");
+  };
+  const handleBasketShow = () => {
+    setBasketShow(!isBasketShow);
+  }; */
 
-  const addToBasket = (item: IGood) => {
+  /*   const addToBasket = (item: IGood) => {
     setOrder((prevOrder) => {
       const addedItemIndex = prevOrder.findIndex(
         (addedItem) => addedItem.id === item.id
@@ -70,7 +72,7 @@ const Shop = () => {
           : orderedItem;
       });
     });
-  };
+  }; */
   /* const incQuantity = (itemId) => {
         const newOrder = order.map((el) => {
             if(el.id === itemId) {
@@ -85,7 +87,7 @@ const Shop = () => {
         });
         setOrder(newOrder);
     }; */
-  const decQuantity = (itemId: string) => {
+  /*   const decQuantity = (itemId: string) => {
     setOrder((prevOrder) => {
       return prevOrder.map((orderedItem) => {
         if (orderedItem.id === itemId) {
@@ -99,36 +101,19 @@ const Shop = () => {
         return orderedItem;
       });
     });
-  };
+  }; */
+
+  /*   const removeFromBasket = (itemId: string) => {
+    const newOrder = order.filter((el) => el.id !== itemId);
+    setOrder(newOrder);
+  }; */
 
   return (
     <main className="container content">
-      <Cart
-        quantity={order.length}
-        handleBasketShow={handleBasketShow}
-      />
-      {loading ? (
-        <Preloader />
-      ) : (
-        <GoodsList
-          goods={goods}
-          addToBasket={addToBasket}
-        />
-      )}
-      {isBasketShow && (
-        <BasketList
-          order={order}
-          handleBasketShow={handleBasketShow}
-          incQuantity={incQuantity}
-          decQuantity={decQuantity}
-        />
-      )}
-      {alertName && (
-        <Alert
-          name={alertName}
-          closeAlert={closeAlert}
-        />
-      )}
+      <Cart />
+      {loading ? <Preloader /> : <GoodsList />}
+      {isBasketShow && <BasketList />}
+      {alertName && <Alert />}
     </main>
   );
 };

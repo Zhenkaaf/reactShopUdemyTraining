@@ -1,9 +1,18 @@
-interface ICartProps {
+import { useContext } from "react";
+import { ShopContext } from "../context";
+
+/* interface ICartProps {
   quantity: number;
   handleBasketShow: () => void;
-}
+} */
 
-const Cart = ({ quantity = 0, handleBasketShow }: ICartProps) => {
+const Cart = () => {
+  const context = useContext(ShopContext);
+  if (!context) {
+    throw new Error("ShopContext must be used within a ShopProvider");
+  }
+  const { order, handleBasketShow } = context;
+  const quantity = order.length;
   return (
     <div
       onClick={handleBasketShow}

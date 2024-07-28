@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { IGood } from "../types";
+import { ShopContext } from "../context";
 
 interface IGoodProps {
   id: string;
@@ -6,16 +8,15 @@ interface IGoodProps {
   image: string;
   description: string;
   heal: number;
-  addToBasket: (item: IGood) => void;
 }
-const GoodsItem = ({
-  id,
-  name,
-  image,
-  description,
-  heal,
-  addToBasket,
-}: IGoodProps) => {
+const GoodsItem = ({ id, name, image, description, heal }: IGoodProps) => {
+  const context = useContext(ShopContext);
+
+  if (!context) {
+    throw new Error("ShopContext must be used within a ShopProvider");
+  }
+
+  const { addToBasket } = context;
   return (
     <div className="card">
       <div className="card-image">

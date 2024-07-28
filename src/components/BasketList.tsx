@@ -1,19 +1,22 @@
-import { IGood } from "../types";
+import { useContext } from "react";
 import BasketItem from "./BasketItem";
+import { ShopContext } from "../context";
 
-interface IBasketList {
+/* interface IBasketList {
   order: IGood[];
   handleBasketShow: () => void;
   incQuantity: (itemId: string) => void;
   decQuantity: (itemId: string) => void;
-}
+  removeFromBasket: (itemId: string) => void;
+} */
 
-const BasketList = ({
-  order,
-  handleBasketShow,
-  incQuantity,
-  decQuantity,
-}: IBasketList) => {
+const BasketList = () => {
+  const context = useContext(ShopContext);
+  if (!context) {
+    throw new Error("ShopContext must be used within a ShopProvider");
+  }
+  const { order, handleBasketShow } = context;
+  console.log(order);
   const totalPrice = order.reduce((sum, el) => {
     return sum + el.heal * (el.quantity ?? 1);
   }, 0);
@@ -25,12 +28,6 @@ const BasketList = ({
           <BasketItem
             key={item.id}
             {...item}
-            id={item.id}
-            name={item.name}
-            price={item.heal}
-            quantity={item.quantity}
-            incQuantity={incQuantity}
-            decQuantity={decQuantity}
           />
         ))
       ) : (

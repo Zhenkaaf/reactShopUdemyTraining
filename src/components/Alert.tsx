@@ -1,10 +1,17 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { ShopContext } from "../context";
 
-interface IAlert {
+/* interface IAlert {
   name: string;
   closeAlert: () => void;
-}
-const Alert = ({ name = "", closeAlert }: IAlert) => {
+} */
+const Alert = () => {
+  console.log("alertRender");
+  const context = useContext(ShopContext);
+  if (!context) {
+    throw new Error("ShopContext must be used within a ShopProvider");
+  }
+  const { alertName: name = "", closeAlert } = context;
   useEffect(() => {
     const timerId = setTimeout(closeAlert, 3000);
     return () => {
